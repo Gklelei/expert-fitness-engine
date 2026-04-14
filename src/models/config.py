@@ -11,5 +11,7 @@ naming_convention = {
     }
 
 meta = MetaData(naming_convention=naming_convention)
+
 db = SQLAlchemy(metadata=meta)
+
 ma = Marshmallow()

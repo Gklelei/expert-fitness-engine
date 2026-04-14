@@ -4,7 +4,7 @@ class Exercise(db.Model):
     __tablename__ = "exercises"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=True)
     category = db.Column(db.String(100), nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False)
 
@@ -36,3 +36,7 @@ class WorkoutExercises(db.Model):
 
     workout = db.relationship('Workout', back_populates='workout_exercises')
     exercise = db.relationship('Exercise', back_populates='workout_exercises')
+
+    __table_args__ = (
+        db.UniqueConstraint('exercise_id', 'workout_id', name='unique_workout_exercise'),
+    )
