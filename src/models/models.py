@@ -1,5 +1,6 @@
 from src import db
 
+
 class Exercise(db.Model):
     __tablename__ = "exercises"
 
@@ -8,8 +9,10 @@ class Exercise(db.Model):
     category = db.Column(db.String(100), nullable=False)
     equipment_needed = db.Column(db.Boolean, nullable=False)
 
+
     workout_exercises = db.relationship('WorkoutExercises', back_populates='exercise')
-    workouts = db.relationship('Workouts', back_populates='exercise',viewonly=True)
+
+    workouts = db.relationship('Workout', secondary='workouts_exercises', back_populates='exercises', viewonly=True)
 
 
 class Workout(db.Model):
@@ -20,8 +23,11 @@ class Workout(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     notes = db.Column(db.Text, nullable=False)
 
-    workout_exercises = db.relationship('WorkOutExercises', back_populates='workout')
-    exercise =db.relationship('Exercise', back_populates='workout_exercises', viewonly=True)
+
+    workout_exercises = db.relationship('WorkoutExercises', back_populates='workout')
+
+
+    exercises = db.relationship('Exercise', secondary='workouts_exercises', back_populates='workouts', viewonly=True)
 
 
 class WorkoutExercises(db.Model):
