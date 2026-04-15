@@ -13,15 +13,21 @@ class ExerciseSchema(SQLAlchemyAutoSchema):
     category = fields.Str(required=True)
     equipment_needed = fields.Bool(required=True)
 
+    workouts = fields.List(
+        fields.Nested(lambda: WorkoutExercisesSchema(exclude=('exercise',)), dump_only=True),
+        attribute='workout_exercises',
+        dump_only=True
+    )
+
     @validates('name')
-    def validate_name(self, value: str):
+    def validate_name(self, value: str, **kwargs):
         if not value or not value.strip():
             raise ValidationError('Exercise name cannot be blank.')
         if len(value.strip()) < 3:
             raise ValidationError('Exercise name must be at least 3 characters long.')
 
     @validates('category')
-    def validate_category(self, value: str):
+    def validate_category(self, value: str, **kwargs):  #
         if not value or not value.strip():
             raise ValidationError('Exercise category cannot be blank.')
         allowed = ['strength', 'cardio', 'flexibility', 'balance']
@@ -29,7 +35,7 @@ class ExerciseSchema(SQLAlchemyAutoSchema):
             raise ValidationError(f'Category must be one of: {", ".join(allowed)}.')
 
     @validates('equipment_needed')
-    def validate_equipment_needed(self, value: bool):
+    def validate_equipment_needed(self, value: bool, **kwargs):
         if not isinstance(value, bool):
             raise ValidationError('equipment_needed must be a boolean (true or false).')
 
@@ -43,18 +49,19 @@ class WorkoutSchema(SQLAlchemyAutoSchema):
     date = fields.Date(required=True)
     duration = fields.Int(required=True)
     notes = fields.Str(required=True)
+
     workout_exercises = fields.List(
         fields.Nested(lambda: WorkoutExercisesSchema(), dump_only=True),
         dump_only=True
     )
 
     @validates('duration')
-    def validate_duration(self, value):
+    def validate_duration(self, value, **kwargs):
         if value <= 0:
             raise ValidationError('Duration must be greater than 0.')
 
     @validates('notes')
-    def validate_notes(self, value):
+    def validate_notes(self, value, **kwargs):
         if not value or not value.strip():
             raise ValidationError('Notes cannot be blank.')
 
@@ -73,17 +80,17 @@ class WorkoutExercisesSchema(SQLAlchemyAutoSchema):
     exercise = fields.Nested(ExerciseSchema, dump_only=True)
 
     @validates('reps')
-    def validate_reps(self, value):
+    def validate_reps(self, value, **kwargs):
         if value <= 0:
             raise ValidationError('Reps must be greater than 0.')
 
     @validates('sets')
-    def validate_sets(self, value):
+    def validate_sets(self, value, **kwargs):
         if value <= 0:
             raise ValidationError('Sets must be greater than 0.')
 
     @validates('duration_seconds')
-    def validate_duration_seconds(self, value):
+    def validate_duration_seconds(self, value, **kwargs):
         if value <= 0:
             raise ValidationError('Duration in seconds must be greater than 0.')
 
