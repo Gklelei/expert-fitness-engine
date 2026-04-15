@@ -1,6 +1,7 @@
 from flask import Blueprint
 from src.controller.exercises_controller import create_exercise,get_all_exercises,get_exercise,delete_exercise
 from src.controller.workouts_controller import create_workouts,get_workouts,get_workout,delete_workout
+from src.controller.workout_exercises_controller import create_workout_exercises
 #Blueprints
 workout_bp = Blueprint('workout', __name__)
 exercise_bp = Blueprint('exercise', __name__)
@@ -18,4 +19,4 @@ exercise_bp .route("/<int:id>", methods=["GET"])(get_exercise)
 exercise_bp .route("/<int:id>", methods=["DELETE"])(delete_exercise)
 
 # workout_exercises
-workout_bp.route('/<int:workout_id>/exercise/<int:exercise_id>/workout_exercises', methods=["GET"])
+workout_bp.route('/<int:workout_id>/exercise/<int:exercise_id>/workout_exercises', methods=["POST"])(create_workout_exercises)
