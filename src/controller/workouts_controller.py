@@ -67,5 +67,6 @@ def delete_workout(id):
 
         return res_json({"message":"Workout has been deleted"}),200
     except Exception as e:
+        db.session.rollback()
         print(str(e))
         return res_json({"message":"Internal server error"}),500
